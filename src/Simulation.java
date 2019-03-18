@@ -3,12 +3,14 @@ public class Simulation {
 		ComponentQueue b1 = new ComponentQueue(Component.c1, "w1");
 		CompoundComponentQueue b2 = new CompoundComponentQueue(Component.c1, Component.c2, "w2");
 		CompoundComponentQueue b3 = new CompoundComponentQueue(Component.c1, Component.c3, "w3");
+		QueueFillingStrategy strategy = new SmallestQueueFillingStrategy();
 
 		Inspector insp1 = new InspectorBuilder()
 				.addComponent(Component.c1)
 				.addInput(b1)
 				.addInput(b2)
 				.addInput(b3)
+				.addFillingStrategy(strategy)
 				.build();
 
 		Inspector insp2 = new InspectorBuilder()
@@ -16,6 +18,7 @@ public class Simulation {
 				.addComponent(Component.c3)
 				.addInput(b2)
 				.addInput(b3)
+				.addFillingStrategy(strategy)
 				.build();
 
 		Workstation w1 = new Workstation(Product.p1, b1);
