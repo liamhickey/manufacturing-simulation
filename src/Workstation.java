@@ -1,24 +1,38 @@
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
+import java.util.Optional;
+import java.util.stream.Stream;
 
-public enum Workstation
+public class Workstation extends Thread
 {
-	w1(Product.p1),
-	w2(Product.p2),
-	w3(Product.p3);
+	private List<Component> requiredComponents;
+	private InputQueue queue;
+	private Product product;
 	
-	private HashMap<Component, Queue<Component>> componentQueues;
-	
-	private Workstation(Product product)
+	public Workstation(Product product, InputQueue queue)
 	{
-		List<Component> requiredComponents = product.getRequiredComponents();
-		this.componentQueues = new HashMap<Component, Queue<Component>>();
-		
-		for (Component component : requiredComponents)
-		{
-			componentQueues.put(component, new LinkedList<Component>());
+		requiredComponents = product.getRequiredComponents();
+		this.queue = queue;
+		this.product = product;
+	}
+
+	public Optional<Product> makeProduct() {
+		Stream<Component> components = queue.getComponents();
+		long remaining = components.filter(component -> !requiredComponents.contains(component)).count();
+		if(remaining == 0) return Optional.of(product);
+		return Optional.empty();
+	}
+
+	@Override
+	public void run() {
+		while(true) {
+			makeProduct().ifPresent(product -> {
+				System.out.println(System.currentTimeMillis() + ": " + product + " produced.");
+			});
+			try {
+				Thread.sleep(150);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
