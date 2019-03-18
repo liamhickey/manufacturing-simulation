@@ -11,7 +11,7 @@ public class RandomQueueFillingStrategy implements QueueFillingStrategy {
 	}
 
 	@Override
-	public Optional<Integer> selectQueue(Component c, List<InputQueue> inputs) {
-		return Optional.of(random.nextInt(inputs.size()));
+	public Optional<InputQueue> selectQueue(Component c, List<InputQueue> inputs) {
+		return Optional.of(inputs.get(random.nextInt(inputs.size())));
 	}
 }

@@ -3,6 +3,7 @@ import java.util.stream.Stream;
 
 public class ComponentQueue implements InputQueue {
 
+	private static final int MAX_SIZE = 2;
     private LinkedList<Component> queue;
     private Component c;
     private String name;
@@ -14,7 +15,7 @@ public class ComponentQueue implements InputQueue {
     }
 
     public synchronized void putComponent(Component c) {
-        while(queue.size() >= 2) {
+        while(queue.size() >= MAX_SIZE) {
             try {
                 wait();
             } catch (InterruptedException e) {}

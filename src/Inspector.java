@@ -18,13 +18,7 @@ public class Inspector extends Thread{
         int index = ThreadLocalRandom.current().nextInt(0, components.size());
         Component c = components.get(index);
 
-        int minimum = queueFillingStrategy.selectQueue(c, inputs).get();
-        Optional<InputQueue> queue = inputs.stream()
-                .filter(inputQueue -> inputQueue.takes(c) && inputQueue.getStock(c) < 2)
-                .filter(inputQueue -> inputQueue.getStock(c) == minimum)
-                .findFirst();
-
-        queue.ifPresent(q -> {
+        queueFillingStrategy.selectQueue(c, inputs).ifPresent(q -> {
             q.putComponent(c);
             System.out.println(System.currentTimeMillis() + ": " + c + " added to " + q.getName(c));
         });
