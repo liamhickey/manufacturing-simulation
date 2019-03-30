@@ -5,17 +5,18 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Inspector extends Thread {
-
+	Simulation simulation;
     List<InputQueue> inputs;
     List<Component> components;
     private QueueFillingStrategy queueFillingStrategy;
-    private Component lastComponent;
+    private ComponentWrapper lastComponent;
     private HashMap<Component, Double> lambdas;
     private Random random;
 
-    public Inspector(List<InputQueue> inputs, List<Component> components, QueueFillingStrategy queueFillingStrategy, HashMap<Component, Double> lambdas) {
+    public Inspector(Simulation simulation, List<InputQueue> inputs, List<Component> components, QueueFillingStrategy queueFillingStrategy, HashMap<Component, Double> lambdas) {
         random = new Random();
         this.lambdas = lambdas;
+        this.simulation = simulation;
     	this.inputs = inputs;
         this.components = components;
         this.queueFillingStrategy = queueFillingStrategy;
@@ -23,16 +24,17 @@ public class Inspector extends Thread {
 
     public void addComponent() {
         int index = ThreadLocalRandom.current().nextInt(0, components.size());
-        lastComponent = components.get(index);
+        lastComponent = new ComponentWrapper(components.get(index), System.currentTimeMillis());
+        simulation.addComponent(lastComponent);
 
-        queueFillingStrategy.selectQueue(lastComponent, inputs).ifPresent(q -> {
+        queueFillingStrategy.selectQueue(lastComponent.getComponent(), inputs).ifPresent(q -> {
             q.putComponent(lastComponent);
-            System.out.println(System.currentTimeMillis() + ": " + lastComponent + " added to " + q.getName(lastComponent));
+            System.out.println(System.currentTimeMillis() + ": " + lastComponent.getComponent() + " added to " + q.getName(lastComponent.getComponent()));
         });
     }
     
     public double getServiceTime() {
-		return Math.log(1 - random.nextDouble()) / (-lambdas.get(lastComponent));
+		return Math.log(1 - random.nextDouble()) / (-lambdas.get(lastComponent.getComponent()));
 	}
 
     public void run() {
@@ -45,6 +47,4 @@ public class Inspector extends Thread {
             }
         }
     }
-
-
 }

@@ -21,9 +21,13 @@ public class Workstation extends Thread
 	}
 
 	public Optional<Product> makeProduct() {
-		Stream<Component> components = queue.getComponents();
-		long remaining = components.filter(component -> !requiredComponents.contains(component)).count();
-		if(remaining == 0) return Optional.of(product);
+		List<ComponentWrapper> usedComponents = queue.getFirst();
+		Stream<ComponentWrapper> components = queue.getComponents();
+		long remaining = components.filter(component -> !requiredComponents.contains(component.getComponent())).count();
+		if(remaining == 0) {
+			usedComponents.forEach(component -> component.setEndTime(System.currentTimeMillis()));
+			return Optional.of(product);
+		}
 		return Optional.empty();
 	}
 	

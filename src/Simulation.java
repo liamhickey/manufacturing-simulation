@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Simulation {
 	public static final double WS1_LAMBDA = 0.217183;
 	public static final double WS2_LAMBDA = 0.09015;
@@ -7,13 +10,32 @@ public class Simulation {
 	public static final double SERVINSP22_LAMBDA = 0.06436289;
 	public static final double SERVINSP23_LAMBDA = 0.048466621;
 	
+	private List<ComponentWrapper> systemComponents;
+	private long numComponents;
+	private double sumOfComponentSystemTimes;
+	
+	public Simulation() {
+		systemComponents = new ArrayList<>();
+	}
+	
+	public void addComponent(ComponentWrapper c) {
+		sumOfComponentSystemTimes += c.getSystemTime();
+		numComponents++;
+	}
+	
+	public double getComponentSystemTimeAverage() {
+		return sumOfComponentSystemTimes / numComponents;
+	}
+	
 	public static void main(String[] args) {
+		Simulation sim = new Simulation();
 		ComponentQueue b1 = new ComponentQueue(Component.c1, "w1");
 		CompoundComponentQueue b2 = new CompoundComponentQueue(Component.c1, Component.c2, "w2");
 		CompoundComponentQueue b3 = new CompoundComponentQueue(Component.c1, Component.c3, "w3");
 		QueueFillingStrategy strategy = new SmallestQueueWs1HighestFillingStrategy();
 
 		Inspector insp1 = new InspectorBuilder()
+				.addSimulation(sim)
 				.addComponent(Component.c1)
 				.addInput(b1)
 				.addInput(b2)
@@ -23,6 +45,7 @@ public class Simulation {
 				.build();
 
 		Inspector insp2 = new InspectorBuilder()
+				.addSimulation(sim)
 				.addComponent(Component.c2)
 				.addComponent(Component.c3)
 				.addInput(b2)

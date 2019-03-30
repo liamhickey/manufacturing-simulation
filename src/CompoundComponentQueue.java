@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -12,8 +14,8 @@ public class CompoundComponentQueue implements InputQueue {
         queues.put(c2, new ComponentQueue(c2, name));
     }
 
-    public synchronized void putComponent(Component c) {
-        queues.get(c).putComponent(c);
+    public synchronized void putComponent(ComponentWrapper c) {
+        queues.get(c.getComponent()).putComponent(c);
 //        System.out.println("+ " + queues.get(c).getName(null) + " has " + queues.get(c).getStock() + " of " + queues.get(c).getComponent());
         notify();
     }
@@ -28,7 +30,7 @@ public class CompoundComponentQueue implements InputQueue {
         return true;
     }
 
-    public synchronized Stream<Component> getComponents() {
+    public synchronized Stream<ComponentWrapper> getComponents() {
         while(!containsBoth()) {
             try {
                 wait();
@@ -51,4 +53,12 @@ public class CompoundComponentQueue implements InputQueue {
     public boolean takes(Component c) {
         return queues.containsKey(c);
     }
+
+	@Override
+	public List<ComponentWrapper> getFirst() {
+		List<ComponentWrapper> firstComponents = new ArrayList<>();
+		// firstComponents has either 1 or 0 elements here
+		queues.values().stream().forEach(componentQueue -> firstComponents.addAll(componentQueue.getFirst()));
+		return firstComponents;
+	}
 }
