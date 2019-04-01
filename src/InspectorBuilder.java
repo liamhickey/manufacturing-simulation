@@ -1,9 +1,11 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class InspectorBuilder {
 	private List<InputQueue> inputs = new ArrayList<>();
 	private List<Component> components = new ArrayList<>();
+	private HashMap<Component, Double> lambdas = new HashMap<Component, Double>();
 	private QueueFillingStrategy queueFillingStrategy;
 
 	public InspectorBuilder addInput(InputQueue i) {
@@ -15,6 +17,11 @@ public class InspectorBuilder {
 		components.add(c);
 		return this;
 	}
+	
+	public InspectorBuilder addLambda(Component c, double lambda) {
+		lambdas.put(c, lambda);
+		return this;
+	}
 
 	public InspectorBuilder addFillingStrategy(QueueFillingStrategy strategy)
 	{
@@ -23,6 +30,6 @@ public class InspectorBuilder {
 	}
 
 	public Inspector build() {
-		return new Inspector(inputs, components, queueFillingStrategy);
+		return new Inspector(inputs, components, queueFillingStrategy, lambdas);
 	}
 }
