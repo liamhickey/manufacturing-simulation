@@ -29,7 +29,7 @@ public class Inspector extends Thread {
 
         queueFillingStrategy.selectQueue(lastComponent.getComponent(), inputs).ifPresent(q -> {
             q.putComponent(lastComponent);
-            System.out.println(System.currentTimeMillis() + ": " + lastComponent.getComponent() + " added to " + q.getName(lastComponent.getComponent()));
+            System.out.println(System.currentTimeMillis() + ": " + lastComponent.getComponent() + "<" + lastComponent.getId() + ">" + " added to " + q.getName(lastComponent.getComponent()));
         });
     }
     

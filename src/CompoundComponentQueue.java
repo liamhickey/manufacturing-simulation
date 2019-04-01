@@ -57,7 +57,7 @@ public class CompoundComponentQueue implements InputQueue {
 	@Override
 	public List<ComponentWrapper> getFirst() {
 		List<ComponentWrapper> firstComponents = new ArrayList<>();
-		// firstComponents has either 1 or 0 elements here
+		// firstComponents will have either 1 or 0 elements here
 		queues.values().stream().forEach(componentQueue -> firstComponents.addAll(componentQueue.getFirst()));
 		return firstComponents;
 	}
