@@ -5,6 +5,7 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Inspector extends Thread {
+
 	Simulation simulation;
     List<InputQueue> inputs;
     List<Component> components;
@@ -15,8 +16,8 @@ public class Inspector extends Thread {
 
     public Inspector(Simulation simulation, List<InputQueue> inputs, List<Component> components, QueueFillingStrategy queueFillingStrategy, HashMap<Component, Double> lambdas) {
         random = new Random();
-        this.lambdas = lambdas;
         this.simulation = simulation;
+        this.lambdas = lambdas;
     	this.inputs = inputs;
         this.components = components;
         this.queueFillingStrategy = queueFillingStrategy;
@@ -24,12 +25,13 @@ public class Inspector extends Thread {
 
     public void addComponent() {
         int index = ThreadLocalRandom.current().nextInt(0, components.size());
-        lastComponent = new ComponentWrapper(components.get(index), System.currentTimeMillis());
-        simulation.addComponent(lastComponent);
+        Component c = components.get(index);
 
-        queueFillingStrategy.selectQueue(lastComponent.getComponent(), inputs).ifPresent(q -> {
+        queueFillingStrategy.selectQueue(c, inputs).ifPresent(q -> {
+        	lastComponent = new ComponentWrapper(c, System.currentTimeMillis());
+            simulation.addComponent(lastComponent);
             q.putComponent(lastComponent);
-            System.out.println(System.currentTimeMillis() + ": " + lastComponent.getComponent() + "<" + lastComponent.getId() + ">" + " added to " + q.getName(lastComponent.getComponent()));
+            System.out.println(System.currentTimeMillis() + ": " + c + "<" + lastComponent.getId() + ">" + " added to " + q.getName(c));
         });
     }
     

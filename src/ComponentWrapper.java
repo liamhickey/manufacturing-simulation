@@ -28,4 +28,8 @@ public class ComponentWrapper {
 	public long getId() {
 		return Id;
 	}
+
+	public long getStartTime() {
+		return startTime;
+	}
 }
