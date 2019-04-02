@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class InspectorBuilder {
+	private Simulation simulation;
 	private List<InputQueue> inputs = new ArrayList<>();
 	private List<Component> components = new ArrayList<>();
 	private HashMap<Component, Double> lambdas = new HashMap<Component, Double>();
@@ -23,13 +24,17 @@ public class InspectorBuilder {
 		return this;
 	}
 
-	public InspectorBuilder addFillingStrategy(QueueFillingStrategy strategy)
-	{
+	public InspectorBuilder addFillingStrategy(QueueFillingStrategy strategy) {
 		queueFillingStrategy = strategy;
+		return this;
+	}
+	
+	public InspectorBuilder addSimulation(Simulation simulation) {
+		this.simulation = simulation;
 		return this;
 	}
 
 	public Inspector build() {
-		return new Inspector(inputs, components, queueFillingStrategy, lambdas);
+		return new Inspector(simulation, inputs, components, queueFillingStrategy, lambdas);
 	}
 }

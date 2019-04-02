@@ -6,15 +6,17 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Inspector extends Thread {
 
+	Simulation simulation;
     List<InputQueue> inputs;
     List<Component> components;
     private QueueFillingStrategy queueFillingStrategy;
-    private Component lastComponent;
+    private ComponentWrapper lastComponent;
     private HashMap<Component, Double> lambdas;
     private Random random;
 
-    public Inspector(List<InputQueue> inputs, List<Component> components, QueueFillingStrategy queueFillingStrategy, HashMap<Component, Double> lambdas) {
+    public Inspector(Simulation simulation, List<InputQueue> inputs, List<Component> components, QueueFillingStrategy queueFillingStrategy, HashMap<Component, Double> lambdas) {
         random = new Random();
+        this.simulation = simulation;
         this.lambdas = lambdas;
     	this.inputs = inputs;
         this.components = components;
@@ -23,16 +25,18 @@ public class Inspector extends Thread {
 
     public void addComponent() {
         int index = ThreadLocalRandom.current().nextInt(0, components.size());
-        lastComponent = components.get(index);
+        Component c = components.get(index);
 
-        queueFillingStrategy.selectQueue(lastComponent, inputs).ifPresent(q -> {
+        queueFillingStrategy.selectQueue(c, inputs).ifPresent(q -> {
+        	lastComponent = new ComponentWrapper(c, System.currentTimeMillis());
+            simulation.addComponent(lastComponent);
             q.putComponent(lastComponent);
-            System.out.println(System.currentTimeMillis() + ": " + lastComponent + " added to " + q.getName(lastComponent));
+            System.out.println(System.currentTimeMillis() + ": " + c + "<" + lastComponent.getId() + ">" + " added to " + q.getName(c));
         });
     }
     
     public double getServiceTime() {
-		return Math.log(1 - random.nextDouble()) / (-lambdas.get(lastComponent));
+		return Math.log(1 - random.nextDouble()) / (-lambdas.get(lastComponent.getComponent()));
 	}
 
     public void run() {
@@ -45,6 +49,4 @@ public class Inspector extends Thread {
             }
         }
     }
-
-
 }

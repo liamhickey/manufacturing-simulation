@@ -1,10 +1,12 @@
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class ComponentQueue implements InputQueue {
 
 	private static final int MAX_SIZE = 2;
-    private LinkedList<Component> queue;
+    private LinkedList<ComponentWrapper> queue;
     private Component c;
     private String name;
 
@@ -14,7 +16,7 @@ public class ComponentQueue implements InputQueue {
         this.name = name;
     }
 
-    public synchronized void putComponent(Component c) {
+    public synchronized void putComponent(ComponentWrapper c) {
         while(queue.size() >= MAX_SIZE) {
             try {
                 wait();
@@ -25,7 +27,7 @@ public class ComponentQueue implements InputQueue {
         queue.add(c);
     }
 
-    public synchronized Stream<Component> getComponents() {
+    public synchronized Stream<ComponentWrapper> getComponents() {
         while(queue.isEmpty()) {
             try {
                 wait();
@@ -55,4 +57,13 @@ public class ComponentQueue implements InputQueue {
     public boolean takes(Component c) {
         return this.c == c;
     }
+
+	@Override
+	public List<ComponentWrapper> getFirst() {
+		List<ComponentWrapper> first = new ArrayList<>();
+		if (!queue.isEmpty()) {
+			first.add(queue.get(0));
+		}
+		return first;
+	}
 }
