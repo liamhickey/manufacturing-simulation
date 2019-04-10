@@ -27,7 +27,7 @@ public class Workstation extends Thread
 		List<ComponentWrapper> components = queue.getComponents().collect(Collectors.toList());
 		List<Component> usedComponents = components.stream().map(ComponentWrapper::getComponent).collect(Collectors.toList());
 		if(usedComponents.containsAll(requiredComponents)) {
-			components.forEach(component -> simulation.addComponentSystemTime(System.currentTimeMillis() - component.getStartTime()));
+			components.forEach(component -> simulation.addComponentSystemTime(System.currentTimeMillis() - component.getStartTime(), component.getComponent()));
 			return Optional.of(product);
 		}
 		return Optional.empty();

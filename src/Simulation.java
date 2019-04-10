@@ -12,6 +12,18 @@ public class Simulation {
 	
 	public static final long TERMINATION_COUNT = 10000;
 	
+	public long totalNumC1;
+	public long totalNumC2;
+	public long totalNumC3;
+	
+	public long runningNumC1;
+	public long runningNumC2;
+	public long runningNumC3;
+	
+	public double sumOfC1SystemTimes;
+	public double sumOfC2SystemTimes;
+	public double sumOfC3SystemTimes;
+	
 	private long runningNumComponents;
 	private long totalNumComponents;
 	private double sumOfComponentSystemTimes;
@@ -24,12 +36,32 @@ public class Simulation {
 	public synchronized void addComponent(ComponentWrapper c) {
 		totalNumComponents++;
 		runningNumComponents++;
+		
+		if (c.getComponent().equals(Component.c1)) {
+			totalNumC1++;
+		} else if (c.getComponent().equals(Component.c2)) {
+			totalNumC2++;
+		} else if (c.getComponent().equals(Component.c3)) {
+			totalNumC3++;
+		}
 		notify();
 	}
 	
-	public synchronized void addComponentSystemTime(double inSystemTime) {
+	public synchronized void addComponentSystemTime(double inSystemTime, Component c) {
+		
 		sumOfComponentSystemTimes += inSystemTime;
 		runningNumComponents--;
+		
+		if (c.equals(Component.c1)) {
+			sumOfC1SystemTimes += inSystemTime;
+			runningNumC1++;
+		} else if (c.equals(Component.c2)) {
+			sumOfC2SystemTimes += inSystemTime;
+			runningNumC2++;
+		} else if (c.equals(Component.c3)) {
+			sumOfC3SystemTimes += inSystemTime;
+			runningNumC3++;
+		}
 	}
 	
 	public double getComponentSystemTimeAverage() {
@@ -48,7 +80,7 @@ public class Simulation {
 		ComponentQueue b1 = new ComponentQueue(Component.c1, "w1");
 		CompoundComponentQueue b2 = new CompoundComponentQueue(Component.c1, Component.c2, "w2");
 		CompoundComponentQueue b3 = new CompoundComponentQueue(Component.c1, Component.c3, "w3");
-		QueueFillingStrategy strategy = new SmallestQueueWs1HighestFillingStrategy();
+		QueueFillingStrategy strategy = new RandomQueueFillingStrategy();
 
 		Inspector insp1 = new InspectorBuilder()
 				.addSimulation(this)

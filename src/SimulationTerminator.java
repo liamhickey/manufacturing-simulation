@@ -28,7 +28,10 @@ public class SimulationTerminator extends Thread {
             		"\nSimulation Time in Miliseconds:   " + simTime + 
             		"\nEffective Arrival Rate of System: " + ((double) simulation.getTotalNumComponents() / (double) simTime) +
             		"\nAverage Num Components in System: " + simulation.getRunningNumComponents() +
-            		"\n total number of components: " + simulation.getTotalNumComponents());
+            		"\n C1 L=" + (simulation.sumOfC1SystemTimes / simulation.totalNumC1) + " l=" + ((double) simulation.totalNumC1 / (double) simTime) + " W=" + simulation.runningNumC1 +
+            		"\n C2 L=" + (simulation.sumOfC2SystemTimes / simulation.totalNumC2) + " l=" + ((double) simulation.totalNumC2 / (double) simTime) + " W=" + simulation.runningNumC2 +
+            		"\n C3 L=" + (simulation.sumOfC3SystemTimes / simulation.totalNumC3) + " l=" + ((double) simulation.totalNumC3 / (double) simTime) + " W=" + simulation.runningNumC3
+            		); 
             System.exit(0);
         }
 	}
