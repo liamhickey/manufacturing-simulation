@@ -12,6 +12,6 @@ public class RandomQueueFillingStrategy implements QueueFillingStrategy {
 
 	@Override
 	public Optional<InputQueue> selectQueue(Component c, List<InputQueue> inputs) {
-		return Optional.of(inputs.get(random.nextInt(inputs.size())));
+		return inputs.stream().filter(inputQueue -> inputQueue.takes(c) && inputQueue.getStock(c) < 2).findAny();
 	}
 }
